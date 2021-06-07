@@ -36,6 +36,18 @@ class Account:
     def get_balance(self):
         return self._balance
 
+    def __enter__(self):
+        print("Entering Class")
+        return self
+
+    def __exit__(self, *args):
+        print('__exit__:', args)
+        return True
+
+    def __getattr__(self, attribute):
+        print('__getattr__: unknown attribute looked up ::: ', attribute)
+        return -1
+
 
 class CurrentAccount(Account):
     def __init__(self, ac_number, name, op_balance, overdraft_limit):
