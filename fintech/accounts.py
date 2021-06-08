@@ -1,3 +1,15 @@
+from timeit import default_timer
+
+
+def timer(func):
+    def inner(self, value):
+        start = default_timer()
+        func(self, value)
+        end = default_timer()
+        print('returned from function:: ', func, ':: it took :: ', end - start, 'seconds')
+    return inner
+
+
 class Account:
     num_instance = 0
 
@@ -19,6 +31,7 @@ class Account:
     def __str__(self):
         return "Account[{}]: - {} , {} account = {}".format(self.ac_number, self.name, self.ac_type, self._balance)
 
+    @timer
     def withdraw(self, amount):
         if 0 < amount <= self._balance:
             self._balance -= amount
@@ -26,6 +39,7 @@ class Account:
         else:
             raise AmountError(self.__str__(), "Withdraw not possible")
 
+    @timer
     def deposit(self, amount):
         if amount > 0:
             self._balance += amount
@@ -58,6 +72,7 @@ class CurrentAccount(Account):
         return "Account[{}]: - {} , Current account = {} , overdraft limit = = {}".format(
             self.ac_number, self.name, self._balance, -self.overdraft_limit)
 
+    @timer
     def withdraw(self, amount):
         if self._balance - amount <= -self.overdraft_limit:
             raise BalanceError(self.__str__())
@@ -103,18 +118,18 @@ class BalanceError(Exception):
 
 
 if __name__ == "__main__":
-    acc1 = Account('123', 'John', 10.05, 'current')
-    acc2 = Account('345', 'John', 23.55, 'savings')
-    acc3 = Account('567', 'Phoebe', 12.45, 'investment')
+    # acc1 = Account('123', 'John', 10.05, 'current')
+    # acc2 = Account('345', 'John', 23.55, 'savings')
+    # acc3 = Account('567', 'Phoebe', 12.45, 'investment')
+    #
+    # print(acc1)
+    # print(acc2)
+    # print(acc3)
 
-    print(acc1)
-    print(acc2)
-    print(acc3)
-
-    acc1.deposit(23.45)
-    acc1.withdraw(12.33)
-    print('balance:', acc1.get_balance())
-    print(Account.num_instance)
+    # acc1.deposit(23.45)
+    # acc1.withdraw(12.33)
+    # print('balance:', acc1.get_balance())
+    # print(Account.num_instance)
     # CurrentAccount(account_number, account_holder,
     # opening_balance, overdraft_limit)
     acc1 = CurrentAccount('123', 'John', 10.05, 100.0)
